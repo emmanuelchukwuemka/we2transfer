@@ -1,6 +1,6 @@
-# PHP Form Submission App
+# Flask Form Submission App
 
-This is a PHP application that serves a web form and handles form submissions by sending the data via email.
+This is a Flask application that serves a web form and handles form submissions by sending the data via email.
 
 ## Features
 
@@ -29,8 +29,8 @@ Set these environment variables in your Render dashboard:
 1. Fork this repository or push it to GitHub/GitLab
 2. Create a new Web Service on Render
 3. Connect your repository
-4. Set the build command to `composer install`
-5. Set the start command to `php -S 0.0.0.0:$PORT app.php`
+4. Set the build command to `pip install -r requirements.txt`
+5. Set the start command to `gunicorn --bind 0.0.0.0:$PORT app:app`
 6. Add the required environment variables
 7. Deploy!
 
@@ -39,8 +39,8 @@ Set these environment variables in your Render dashboard:
 To run locally:
 
 ```bash
-composer install
-php -S localhost:8000 app.php
+pip install -r requirements.txt
+python app.py
 ```
 
 Visit `http://localhost:8000` in your browser.
@@ -49,7 +49,7 @@ Visit `http://localhost:8000` in your browser.
 
 1. The application serves `index.html` as the main page
 2. When users submit the form, data is sent to `/submit` endpoint
-3. The PHP backend captures the form data and sends it via email
+3. The Flask backend captures the form data and sends it via email
 4. Success response is returned to the client
 
 ## Security Notes

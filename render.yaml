@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: php-form-app
-    env: php
-    buildCommand: "composer install"
-    startCommand: "php -S 0.0.0.0:$PORT app.php"
+    name: flask-form-app
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn --bind 0.0.0.0:$PORT app:app"
     envVars:
       - key: PORT
         value: 8000
