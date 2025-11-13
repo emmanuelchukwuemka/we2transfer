@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: php-form-app
+    env: php
+    buildCommand: "composer install"
+    startCommand: "php -S 0.0.0.0:$PORT app.php"
+    envVars:
+      - key: PORT
+        value: 8000
