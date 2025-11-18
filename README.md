@@ -17,12 +17,14 @@ This application is configured for deployment to Render with the included `rende
 
 Set these environment variables in your Render dashboard:
 
-- `SENDER_EMAIL` - Primary sender email address
-- `SENDER_EMAIL_BACKUP` - Backup sender email address
-- `SENDER_PASSWORD` - Sender email password or app password
-- `RECEIVER_EMAIL` - Email address to receive form submissions
+- `SENDER_EMAIL` - Primary sender email address (required)
+- `SENDER_EMAIL_BACKUP` - Backup sender email address (optional)
+- `SENDER_PASSWORD` - Sender email password or app password (required)
+- `RECEIVER_EMAIL` - Email address to receive form submissions (required)
 - `SMTP_SERVER` - SMTP server (default: smtp.gmail.com)
 - `SMTP_PORT` - SMTP port (default: 587)
+
+**Important:** For Gmail, you should use an App Password instead of your regular password. Generate one in your Google Account settings.
 
 ### Deploy Steps
 
@@ -40,6 +42,9 @@ To run locally:
 
 ```bash
 pip install -r requirements.txt
+export SENDER_EMAIL=your-email@gmail.com
+export SENDER_PASSWORD=your-app-password
+export RECEIVER_EMAIL=receiver-email@gmail.com
 python app.py
 ```
 
@@ -57,3 +62,4 @@ Visit `http://localhost:8000` in your browser.
 - Form data is sent via email
 - No database storage
 - Email credentials should be kept secure
+- Use App Passwords for Gmail instead of regular passwords

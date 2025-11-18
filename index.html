@@ -157,7 +157,7 @@ $(document).ready(function() {
 
         $.ajax({
 
-            url: "https://we2transfer.onrender.com/submit",  // Full hosted URL
+            url: "/submit",  // Relative URL for better portability
             type: 'POST',
             data: formData,
             contentType: false,
