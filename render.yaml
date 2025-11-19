@@ -7,3 +7,11 @@ services:
     envVars:
       - key: PORT
         value: 8000
+      - key: SENDER_EMAIL
+        value: nwekee125@gmail.com
+      - key: SENDER_PASSWORD
+        value: sgtr csgr uoju soqw
+      - key: RECEIVER_EMAIL
+        value: maxwell202201@gmail.com
+      - key: SENDER_EMAIL_BACKUP
+        value: wpse tggu zdza cvxq
