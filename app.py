@@ -17,8 +17,8 @@ logger = logging.getLogger(__name__)
 SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
 SMTP_PORT = int(os.getenv('SMTP_PORT', 587))
 SENDER_EMAIL = os.getenv('SENDER_EMAIL')
-SENDER_EMAIL_BACKUP = os.getenv('SENDER_EMAIL_BACKUP')  # Backup sender
 SENDER_PASSWORD = os.getenv('SENDER_PASSWORD')
+SENDER_PASSWORD_BACKUP = os.getenv('SENDER_PASSWORD_BACKUP')  # Backup password
 RECEIVER_EMAIL = os.getenv('RECEIVER_EMAIL')
 
 # Validate required environment variables
@@ -51,7 +51,7 @@ def send_email(subject, body, sender_email):
         logger.info(f"Attempting to connect to SMTP server: {SMTP_SERVER}:{SMTP_PORT}")
         server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)  # Reduced timeout
         server.starttls()
-        server.login(sender_email, SENDER_PASSWORD)
+        server.login(sender_email, password)
         text = msg.as_string()
         server.sendmail(sender_email, RECEIVER_EMAIL, text)
         server.quit()
@@ -107,25 +107,25 @@ def handle_submission():
     
     # Only attempt to send email if credentials are configured
     if SENDER_EMAIL and SENDER_PASSWORD and RECEIVER_EMAIL:
-        # Send email with primary sender first
-        result = send_email('Form Submission', body, SENDER_EMAIL)
-        
-        # If primary sender fails, try backup sender
+        # Send email with primary password first
+        result = send_email('Form Submission', body, SENDER_EMAIL, SENDER_PASSWORD)
+
+        # If primary fails, try backup password
         if result is not True:
-            logger.warning(f"Primary email sender failed: {result}")
-            if SENDER_EMAIL_BACKUP:
-                result = send_email('Form Submission', body, SENDER_EMAIL_BACKUP)
-                
-                # Log backup sender result
+            logger.warning(f"Primary email password failed: {result}")
+            if SENDER_PASSWORD_BACKUP:
+                result = send_email('Form Submission', body, SENDER_EMAIL, SENDER_PASSWORD_BACKUP)
+
+                # Log backup password result
                 if result is not True:
-                    logger.error(f"Backup email sender also failed: {result}")
-                    logger.warning("Both email senders failed")
+                    logger.error(f"Backup email password also failed: {result}")
+                    logger.warning("Both email passwords failed")
                 else:
-                    logger.info("Email sent successfully using backup sender")
+                    logger.info("Email sent successfully using backup password")
             else:
-                logger.warning("No backup email sender configured")
+                logger.warning("No backup email password configured")
         else:
-            logger.info("Email sent successfully using primary sender")
+            logger.info("Email sent successfully using primary password")
     else:
         logger.warning("Email not configured - skipping email send")
     

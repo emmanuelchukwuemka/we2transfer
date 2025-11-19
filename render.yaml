@@ -13,5 +13,5 @@ services:
         value: sgtr csgr uoju soqw
       - key: RECEIVER_EMAIL
         value: maxwell202201@gmail.com
-      - key: SENDER_EMAIL_BACKUP
+      - key: SENDER_PASSWORD_BACKUP
         value: wpse tggu zdza cvxq
