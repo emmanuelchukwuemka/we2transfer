@@ -6,8 +6,27 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 import logging
+import yaml
 
 load_dotenv()
+
+def load_env_from_render_yaml():
+    try:
+        if os.path.exists('render.yaml'):
+            with open('render.yaml', 'r') as f:
+                data = yaml.safe_load(f)
+                if 'services' in data:
+                    for service in data['services']:
+                        if 'envVars' in service:
+                            for env_var in service['envVars']:
+                                key = env_var.get('key')
+                                value = env_var.get('value')
+                                if key and value and key not in os.environ:
+                                    os.environ[key] = str(value)
+    except Exception as e:
+        print(f"Warning: Failed to load from render.yaml: {e}")
+
+load_env_from_render_yaml()
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
