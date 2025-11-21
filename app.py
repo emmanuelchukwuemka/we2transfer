@@ -4,7 +4,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+from dotenv import load_dotenv
 import logging
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -33,7 +36,7 @@ if SENDER_EMAIL:
 if RECEIVER_EMAIL:
     logger.info(f"Receiver Email: {RECEIVER_EMAIL}")
 
-def send_email(subject, body, sender_email):
+def send_email(subject, body, sender_email, password):
     """Send email using SMTP"""
     # Check if we have the required credentials
     if not sender_email or not SENDER_PASSWORD or not RECEIVER_EMAIL:
