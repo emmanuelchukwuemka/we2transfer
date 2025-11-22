@@ -38,9 +38,8 @@ def submit():
         msg.attach(MIMEText(body, 'plain'))
 
         # Send the email
-        # Note: This example uses Gmail's SMTP server. Change if using another provider.
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
-            server.starttls()
+        # Using SMTP_SSL on port 465 because Render often blocks port 587
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
             server.login(SENDER_EMAIL, SENDER_PASSWORD)
             server.send_message(msg)
 
