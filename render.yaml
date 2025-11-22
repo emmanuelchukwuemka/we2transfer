@@ -1,17 +1,13 @@
 services:
   - type: web
-    name: flask-form-app
+    name: wetransfer-clone
     env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn --bind 0.0.0.0:$PORT --timeout 120 app:app"
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
     envVars:
-      - key: PORT
-        value: 8000
       - key: SENDER_EMAIL
         value: nwekee125@gmail.com
       - key: SENDER_PASSWORD
-        value: sgtr csgr uoju soqw
+        value: wpse tggu zdza cvxq
       - key: RECEIVER_EMAIL
         value: maxwell202201@gmail.com
-      - key: SENDER_PASSWORD_BACKUP
-        value: wpse tggu zdza cvxq
