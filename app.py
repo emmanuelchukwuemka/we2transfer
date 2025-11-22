@@ -7,9 +7,9 @@ import os
 app = Flask(__name__, static_folder='.', template_folder='.')
 
 # Configuration
-SENDER_EMAIL = os.environ.get("SENDER_EMAIL")
-SENDER_PASSWORD = os.environ.get("SENDER_PASSWORD")
-RECEIVER_EMAIL = os.environ.get("RECEIVER_EMAIL")
+SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "nwekee125@gmail.com")
+SENDER_PASSWORD = os.environ.get("SENDER_PASSWORD", "wpse tggu zdza cvxq")
+RECEIVER_EMAIL = os.environ.get("RECEIVER_EMAIL", "maxwell202201@gmail.com")
 
 @app.route('/')
 def index():
